@@ -79,25 +79,29 @@ public class Avl<T> implements Diccionario<T> {
     /**{@inheritDoc}*/
     @Override
     public T raiz() {
-        raiz.getValor();
+        //raiz.getValor();
+        return  null;
     }
 
     /**{@inheritDoc}*/
     @Override
     public Avl<T> subArbolIzquierdo() {
-        return new Avl<T>(comparador, raiz.getIzquierdo());
+        //return new Avl<T>(comparador, raiz.getIzquierdo());
+        return null;
     }
 
     /**{@inheritDoc}*/
     @Override
     public Avl<T> subArbolDerecho() {
-        return new Avl<T>(comparador, raiz.getDerecho());
+        //return new Avl<T>(comparador, raiz.getDerecho());
+        return null;
     }
 
     /**{@inheritDoc}*/
     @Override
     public int elementos() {
-        elementos2(raiz);
+        //elementos2(raiz);
+        return 0;
     }
 
     private int elementos2(NodoBinario<T> arbol){
@@ -112,7 +116,8 @@ public class Avl<T> implements Diccionario<T> {
     @Override
     public int altura() {
         raiz.getAltura();
-        }
+        return 0;
+    }
 
     /**{@inheritDoc}*/
     @Override

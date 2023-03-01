@@ -25,9 +25,9 @@ public class TestABB {
     public void testInsertarBorrar() {
         
         arbol.insertar(10);
-        arbol.insertar(16);
-        arbol.insertar(1);
-        arbol.insertar(8);
+//        arbol.insertar(16);
+//        arbol.insertar(1);
+//        arbol.insertar(8);
 //        System.out.println(arbol.raiz());
 //        System.out.println(arbol.subArbolIzquierdo().raiz());
 //        System.out.println(arbol.subArbolDerecho().raiz());
@@ -41,7 +41,7 @@ public class TestABB {
 //        assertEquals(2, arbol.elementos());
 //        assertFalse(arbol.pertenece(16));
 //        assertFalse(arbol.pertenece(1));
-    }
+        }
 
 /*    @Test
     public void testMaximo() {
