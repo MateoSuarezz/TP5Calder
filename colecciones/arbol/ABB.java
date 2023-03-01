@@ -52,11 +52,21 @@ public class ABB<T> implements Diccionario<T>{
     @Override
     public void insertar(T elem){
         if(raiz == null){
+            
             raiz = new NodoBinario<T>(elem);
+
         }else if(comparador.compare(elem,raiz.getValor())<0){
-            this.subArbolIzquierdo().insertar(elem);
+            
+            ABB arbol = (ABB) this.subArbolIzquierdo();
+            arbol.insertar(elem);
+            raiz.setIzquierdo(arbol.getRaiz());
+            
         }else{
-            this.subArbolDerecho().insertar(elem);
+            
+            ABB arbol = (ABB) this.subArbolDerecho();
+            arbol.insertar(elem);
+            raiz.setDerecho(arbol.getRaiz());
+        
         }
     }
 
