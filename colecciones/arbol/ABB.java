@@ -50,30 +50,15 @@ public class ABB<T> implements Diccionario<T>{
      * {@inheritDoc}
      */
     @Override
-       public void insertar(T elem){
-        insertarAuxiliar(raiz, elem);
-        this.elementos = elementos + 1;
+    public void insertar(T elem){
+        if(raiz == null){
+            raiz = new NodoBinario<T>(elem);
+        }else if(comparador.compare(elem,raiz.getValor())<0){
+            this.subArbolIzquierdo().insertar(elem);
+        }else{
+            this.subArbolDerecho().insertar(elem);
+        }
     }
-
-   public NodoBinario <T> insertarAuxiliar (NodoBinario <T> nodo, T valor){
-        if (nodo == null){
-            NodoBinario<T> aux = new NodoBinario<T>(valor);
-            aux.setAltura(1);
-            return (aux);
-        }
-        else{
-            if(comparador.compare(valor,nodo.getValor())<0){
-                insertarAuxiliar(nodo.getIzquierdo(), valor);
-            }
-            else if (comparador.compare(valor,nodo.getValor())>0){
-                insertarAuxiliar(nodo.getDerecho(), valor);
-            }
-            else if (comparador.compare(valor,nodo.getValor())==0){
-                nodo.setValor(valor);
-            }
-        }
-        return nodo;
-   }
 
     /**
      * {@inheritDoc}

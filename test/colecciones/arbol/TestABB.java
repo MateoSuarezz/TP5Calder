@@ -25,14 +25,14 @@ public class TestABB {
     public void testInsertarBorrar() {
         
         arbol.insertar(10);
-//        arbol.insertar(16);
+        arbol.insertar(16);
 //        arbol.insertar(1);
 //        arbol.insertar(8);
 //        System.out.println(arbol.raiz());
 //        System.out.println(arbol.subArbolIzquierdo().raiz());
 //        System.out.println(arbol.subArbolDerecho().raiz());
-//        assertTrue(arbol.pertenece(10));
-//        assertTrue(arbol.pertenece(16));
+        assertTrue(arbol.pertenece(10));
+        assertTrue(arbol.pertenece(16));
 //        assertTrue(arbol.pertenece(1));
 //        assertFalse(arbol.pertenece(9));
 //        assertEquals(4, arbol.elementos());
