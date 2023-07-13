@@ -52,22 +52,23 @@ public class ABB<T> implements Diccionario<T>{
     @Override
     public void insertar(T elem){
         if(raiz == null){
-            
+
             raiz = new NodoBinario<T>(elem);
 
         }else if(comparador.compare(elem,raiz.getValor())<0){
-            
-            ABB arbol = (ABB) this.subArbolIzquierdo();
+
+            ABB <T> arbol = (ABB <T>) this.subArbolIzquierdo();
             arbol.insertar(elem);
             raiz.setIzquierdo(arbol.getRaiz());
-            
+
         }else{
-            
+
             ABB arbol = (ABB) this.subArbolDerecho();
             arbol.insertar(elem);
             raiz.setDerecho(arbol.getRaiz());
-        
+
         }
+        this.elementos++;
     }
 
     /**
@@ -75,7 +76,7 @@ public class ABB<T> implements Diccionario<T>{
      */
     public boolean pertenece(T elem){
         NodoBinario<T> aux = raiz;
-       
+
         while(aux != null){
             if (comparador.compare(elem,aux.getValor())==0) {
                 return true;
@@ -85,91 +86,62 @@ public class ABB<T> implements Diccionario<T>{
                 aux = aux.getDerecho();
             }
         }
-        
+
         return false;
-        
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void borrar(T elem){
-        if(!pertenece(elem)) throw new NullPointerException("El elemento no se encuentra en el arbol");
-
-        if(comparador.compare(elem, raiz.getValor()) == 0){
-            NodoBinario<T> nodoPred = buscarNodo(predecesor(raiz.getValor()));
-            raiz.setValor(nodoPred.getValor());
-            nodoPred = null;
-            return;
-        }
-
-        NodoBinario<T> aux = raiz;
-
-        while((comparador.compare(elem, aux.getIzquierdo().getValor()) != 0) && (comparador.compare(elem, aux.getDerecho().getValor()) != 0)){
-            if(comparador.compare(elem, aux.getValor()) < 0){
-                aux = aux.getIzquierdo();
-            }
-            
-            if(comparador.compare(elem, aux.getValor()) > 0){
-                aux = aux.getDerecho();
-            }
-        }
-        // termina el ciclo y aux es el padre del que se quiere eliminar
-
-        if(comparador.compare(elem, aux.getValor()) < 0){
-            borrado(aux.getIzquierdo(), aux);
-        }
-        
-        if(comparador.compare(elem, aux.getValor()) > 0){
-            borrado(aux.getDerecho(), aux);
-        }
+    public void borrar(T elem) {
+        raiz = borrarRecursivo(raiz, elem);
+        elementos--;
     }
 
-    private void borrado(NodoBinario<T> nodo, NodoBinario<T> padre){
-        if(nodo.getIzquierdo() == null && nodo.getDerecho() == null){   // es hoja
-            nodo = null;
-        }else if(nodo.getIzquierdo() != null && nodo.getDerecho() != null){     // tiene los dos hijos
-            T x = predecesor(nodo.getValor());
-            nodo.setValor(x);
-            
-            NodoBinario<T> aElim = nodo.getIzquierdo();
-            while(aElim.getDerecho() != null){
-                aElim = aElim.getDerecho();
-            }
-            aElim = null;
-        }else{
-            if(nodo.getIzquierdo() == null){        // no tiene hijo izquierdo
-                NodoBinario<T> aux = nodo;
-                padre.setDerecho(nodo.getDerecho());
-                aux.setDerecho(null);
-            }else{                                  // no tiene hijo derecho
-                NodoBinario<T> aux = nodo;
-                padre.setIzquierdo(nodo.getIzquierdo());
-                aux.setIzquierdo(null);
-            }
+    private NodoBinario<T> borrarRecursivo(NodoBinario<T> nodo, T elem) {
+        if (nodo == null) {
+            return null;
         }
+
+        int comparacion = comparador.compare(elem, nodo.getValor());
+
+        if (comparacion < 0) {
+            nodo.setIzquierdo(borrarRecursivo(nodo.getIzquierdo(), elem));
+        }
+        else if (comparacion > 0) {
+            nodo.setDerecho(borrarRecursivo(nodo.getDerecho(), elem));
+        }
+        else {
+            // Caso 1: El nodo es una hoja (no tiene hijos)
+            if (nodo.getIzquierdo() == null && nodo.getDerecho() == null) {
+                return null;
+            }
+
+            // Caso 2: El nodo tiene un solo hijo
+            if (nodo.getIzquierdo() == null) {
+                return nodo.getDerecho();
+            }
+
+            if (nodo.getDerecho() == null) {
+                return nodo.getIzquierdo();
+            }
+
+            // Caso 3: El nodo tiene dos hijos
+            NodoBinario<T> sucesor = encontrarSucesor(nodo.getDerecho());
+            nodo.setValor(sucesor.getValor());
+            nodo.setDerecho(borrarRecursivo(nodo.getDerecho(), sucesor.getValor()));
+        }
+
+        return nodo;
     }
 
-    private NodoBinario<T> buscarNodo(T elem){
-        boolean perdido = true;
-        NodoBinario<T> aux = raiz;
-
-        while(perdido == true && aux != null){
-            if(comparador.compare(elem, aux.getValor()) == 0){
-                perdido = false;
-            }
-            
-            if(comparador.compare(elem, aux.getValor()) > 0){
-                aux = aux.getDerecho();
-            }
-
-            if(comparador.compare(elem, aux.getValor()) < 0){
-                aux = aux.getIzquierdo();
-            }
+    private NodoBinario<T> encontrarSucesor(NodoBinario<T> nodo) {
+        while (nodo.getIzquierdo() != null) {
+            nodo = nodo.getIzquierdo();
         }
-
-        return aux;
+        return nodo;
     }
 
     /**
@@ -209,15 +181,7 @@ public class ABB<T> implements Diccionario<T>{
      */
     @Override
     public int elementos(){
-        return elementos2(this.raiz);
-    }
-
-    private int elementos2(NodoBinario<T> arbol){
-        if(arbol == null){
-            return 0;
-        }else{
-            return 1 + elementos2(arbol.getDerecho()) + elementos2(arbol.getIzquierdo());
-        }
+        return elementos;
     }
 
     /**
@@ -233,7 +197,7 @@ public class ABB<T> implements Diccionario<T>{
      */
     @Override
     public boolean esVacio(){
-        return raiz == null;
+        return (elementos == 0);
     }
 
     /**
@@ -271,7 +235,7 @@ public class ABB<T> implements Diccionario<T>{
 
         if(comparador.compare(listaArbol.get(i), elem) == 0){
             if(i == listaArbol.size() -1) return null;
-            
+
             return listaArbol.get(++i);
         }
 
@@ -347,8 +311,16 @@ public class ABB<T> implements Diccionario<T>{
      * y va llenando la lista con los elementos del árbol según un recorrido in order.
      * Si bien el prefil está pensando para una implementación recursiva, puede probar con una implementación iterativa.
      */
-    private List<T> aListaInOrder(NodoBinario<T> raiz, List<T> elementos){
-        throw new UnsupportedOperationException("TODO: implementar");
+    private List<T> aListaInOrder(NodoBinario<T> raiz, List<T> elementos) {
+        if (raiz == null) {
+            return elementos;
+        }
+
+        aListaInOrder(raiz.getIzquierdo(), elementos); // Recorrido in-order del subárbol izquierdo
+        elementos.add(raiz.getValor()); // Agregar el elemento actual a la lista
+        aListaInOrder(raiz.getDerecho(), elementos); // Recorrido in-order del subárbol derecho
+
+        return elementos;
     }
 
     /* (non-Javadoc)
@@ -375,7 +347,7 @@ public class ABB<T> implements Diccionario<T>{
             System.out.println(r.getValor());
             if (r.getIzquierdo()!= null) {
                 prinInOrder(r.getIzquierdo());
-                System.out.println("???????????");                    
+                System.out.println("???????????");
             }else if(r.getDerecho()!= null){
                 prinInOrder(r.getDerecho());
                 System.out.println("!!!!!!!!!!!");
