@@ -19,7 +19,6 @@ public class ABB<T> implements Diccionario<T>{
 
     private int elementos;
 
-    private int altura;
     /**
      * Construye un nuevo árbol vacío ordenado acorde al comparador dado.
      * @param comparador define una forma de comparar los valores insertados en el arbol.
@@ -38,7 +37,6 @@ public class ABB<T> implements Diccionario<T>{
     public ABB(Comparator<? super T> comparador, T valor){
        	this.comparador = comparador;
         raiz.setValor(valor);
-        this.altura = 1;
     }
 
     public ABB(Comparator<? super T> comparador, NodoBinario<T> arb){
