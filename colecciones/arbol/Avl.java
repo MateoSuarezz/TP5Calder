@@ -22,8 +22,6 @@ public class Avl<T> implements Diccionario<T> {
      */
     private final Comparator<? super T> comparador;
 
-    private T puntero;
-
     private int elementos;
     /**
      * Construye un nuevo árbol vacío ordenado acorde al comparador dado.
@@ -81,6 +79,7 @@ public class Avl<T> implements Diccionario<T> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean pertenece(T elem) {
         if (raiz == null)
             return false;
@@ -276,6 +275,31 @@ public class Avl<T> implements Diccionario<T> {
             return 0;
         else
             return this.subArbolIzquierdo().altura() - this.subArbolDerecho().altura();
+    }
+
+    /**
+     * Esta función es extra para poder generar con facilidad la búsqueda en mi Torneo.
+     * @param elemento
+     * @return el elemento buscado, si no se encuentra retorna null.
+    */
+
+    public T obtener(T elemento) {
+        return obtener(this.raiz, elemento);
+    }
+    
+    private T obtener(NodoBinario<T> nodo, T elemento) {
+        if (nodo == null) {
+            return null;
+        }
+        int comparacion = comparador.compare(elemento, nodo.getValor());
+    
+        if (comparacion == 0) {
+            return nodo.getValor();
+        } else if (comparacion < 0) {
+            return obtener(nodo.getIzquierdo(), elemento);
+        } else {
+            return obtener(nodo.getDerecho(), elemento);
+        }
     }
 
     /** {@inheritDoc} */

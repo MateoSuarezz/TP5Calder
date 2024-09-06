@@ -1,7 +1,7 @@
 package torneo;
 
 import torneo.*;
-
+import colecciones.arbol.Avl;
 import colecciones.arbol.Diccionario;
 import colecciones.arbol.Diccionario.Orden;
 
@@ -17,20 +17,18 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class Torneo {
     Set<Equipo> equipos;
-    Diccionario<PartidosEquipo> posiciones;
+    Diccionario<PartidosEquipo> posiciones = new Avl<PartidosEquipo>(new MyComparator());
     /**
      * Dado un equipo {@code e}, retorna el equipo siguiente (el que le sigue en cantidad de puntos) en la tabla de posiciones.
      * Esta operacion debe realizarse en O(log n).
      * @param e equipo del que se quiere calcular cual es el que le sigue segun la tabla de posiciones del torneo.
      * @return Equipo siguiente segun la tabla de posiciones del torneo, si hay mas de un equipo con partidos jugados.
      */
-    public Equipo siguiente(Equipo e){
-            LinkedList lista = new LinkedList<>();
-            lista.addAll(posiciones.aLista());
-            lista.sort(new SortbyPuntos());
-            Equipo aux = (Equipo)lista.get(lista.indexOf(e)+1);
-        return aux;
+    public Equipo siguiente(Equipo e) {
+       PartidosEquipo aux = posiciones.mayorValor();
+        return aux.getEquipoX();
     }
+
 
     /**
      * Registra en la tabla de posiciones los valores asociados a los equipos que jugaron un partido del torneo.
@@ -47,26 +45,8 @@ public class Torneo {
 
      */
     public void agregarPartido(Equipo eLocal, Equipo eVisitante, int golesEL, int golesEV, int amarillasEL, int amarillasEV, int rojasEL, int rojasEV){
-        
-        if(posiciones != null){
-            List<PartidosEquipo> lista = new LinkedList<>();
-            lista = posiciones.aLista();
-            Boolean visitante, local;
-            local = lista.contains(eLocal);
-            visitante = lista.contains(eVisitante);
-
-
-            if (local && visitante){
-                calcularPuntos(eLocal, golesEL, golesEV, amarillasEL,rojasEL);
-                calcularPuntos(eVisitante,golesEV, golesEL, amarillasEV, rojasEV);
-            }else{
-                if(local == false){
-                    throw new Error("No se ha encontrado el equipo local");
-                }else{
-                    throw new Error("No se ha encontrado el equipo visitante");
-                }
-            }
-        }
+        PartidosEquipo auxiliar = new PartidosEquipo(eLocal, golesEV, golesEV, amarillasEV, rojasEV, rojasEV);
+        posiciones.insertar(auxiliar);
     }
 
     /**
@@ -75,11 +55,7 @@ public class Torneo {
      * @return datos de los puntajes asociados a los partidos del equipo con mas puntos en la tabla de posiciones.
      */
     public PartidosEquipo puntero(){
-        LinkedList lista = new LinkedList<>();
-            lista.addAll(posiciones.aLista());
-            lista.sort(new SortbyPuntos());
-            PartidosEquipo aux = (PartidosEquipo)lista.getLast();
-        return aux;
+        return posiciones.mayorValor();
     }
 
     /**
@@ -88,10 +64,15 @@ public class Torneo {
      * @param e equipo del que se quiere extraer los puntos acumulados en el torneo.
      * @return los puntos que tiene el equipo {@code e} segun la tabla de posiciones.
      */
-    public int puntos(Equipo e){
-        return e.getPuntos();
+    public int puntos(Equipo e) {
+        PartidosEquipo buscado = new PartidosEquipo(e, 0, 0, 0, 0, 0); // Other values set to 0 for search purposes.
+        PartidosEquipo encontrado = posiciones.obtener(buscado);
+        if (encontrado != null) {
+            return encontrado.getPuntos(); 
+        } else {
+            return 0;
+        }
     }
-
 
     public void calcularPuntos(Equipo e, int goles, int goles2, int amarillas, int rojas){
             if(goles > goles2){
@@ -129,5 +110,35 @@ public class Torneo {
             return a.getPuntos() - b.getPuntos();
         }
     }
+
+
+        static class MyComparator implements Comparator<PartidosEquipo> {
+
+		@Override
+		public int compare(PartidosEquipo uno, PartidosEquipo dos){
+
+			int Puntaje = uno.getPuntos() - (dos.getPuntos());
+            int GolesDiferencia = uno.getGolesDiferencia() - (dos.getGolesDiferencia());
+            int GolesAFavor = uno.getGolesX() - (dos.getGolesX());
+            int Faltas_rojas = uno.getRojas() - (dos.getRojas());
+            int Faltas_amarillas = uno.getAmarillas() - (dos.getAmarillas());
+      
+      
+      if(Puntaje == 0){
+        if(GolesDiferencia == 0){
+          if(GolesAFavor == 0){
+             if(Faltas_rojas == 0){
+               return Faltas_amarillas;
+             }
+             return Faltas_rojas;
+          }
+          return GolesAFavor;
+        }
+        return GolesDiferencia;
+      }
+      return Puntaje;
+		}
+    
+	}
     
 }
